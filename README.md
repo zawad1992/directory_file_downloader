@@ -116,8 +116,9 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 👤 Author
 
-**Zawad1992**
+**Zawadul Kawum**
 - GitHub: [@zawad1992](https://github.com/zawad1992)
+- Website: [zawadulkawum.com](https://zawadulkawum.com)
 
 ## 🙏 Acknowledgments
 
