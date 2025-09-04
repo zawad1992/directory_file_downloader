@@ -22,7 +22,7 @@ foreach ($files as $file) {
         // Skip PHP files and the current script
         $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
 
-        $skippedExtensions = ['php', 'html', 'css', 'js', 'bat', 'sh', 'cmd', 'ini', 'json', 'xml', 'yml', 'yaml'];
+        $skippedExtensions = ['php', 'html', 'css', 'js', 'bat', 'sh', 'cmd', 'ini', 'json', 'xml', 'yml', 'yaml', 'md'];
         if (in_array($extension, $skippedExtensions) || $file === $currentScript) {
             continue;
         }
