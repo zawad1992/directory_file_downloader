@@ -203,10 +203,22 @@ usort($fileList, function($a, $b) {
                                                 </small>
                                             </td>
                                             <td>
-                                                <a href="<?php echo htmlspecialchars($file['name']); ?>" 
-                                                   class="btn btn-primary btn-sm" target="_blank">
-                                                    <i class="fas fa-download me-1"></i>Download
-                                                </a>
+                                                <?php if (in_array($file['extension'], ['mp4', 'avi', 'mov', 'mkv', 'wmv', 'webm', 'flv', 'm4v'])): ?>
+                                                    <div class="d-flex flex-column gap-1">
+                                                        <button type="button" class="btn btn-success btn-sm" onclick="playVideo('<?php echo htmlspecialchars($file['name']); ?>')">
+                                                            <i class="fas fa-play me-1"></i>Watch Now
+                                                        </button>
+                                                        <a href="<?php echo htmlspecialchars($file['name']); ?>" 
+                                                           class="btn btn-outline-primary btn-sm" download>
+                                                            <i class="fas fa-download me-1"></i>Download
+                                                        </a>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <a href="<?php echo htmlspecialchars($file['name']); ?>" 
+                                                       class="btn btn-primary btn-sm" target="_blank">
+                                                        <i class="fas fa-download me-1"></i>Download
+                                                    </a>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -214,6 +226,25 @@ usort($fileList, function($a, $b) {
                             </table>
                         </div>
                     <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Video Player Section -->
+            <div id="videoPlayerSection" class="card mt-4" style="display: none;">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-play-circle me-2"></i>
+                        <span id="videoTitle">Now Playing</span>
+                    </h5>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="closeVideo()">
+                        <i class="fas fa-times me-1"></i>Close Player
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <video id="inlineVideoPlayer" class="w-100" controls controlsList="nodownload noremoteplayback" disablePictureInPicture style="max-height: 500px;">
+                        <source id="inlineVideoSource" src="" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
             </div>
 
@@ -229,5 +260,68 @@ usort($fileList, function($a, $b) {
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function playVideo(filename) {
+            const videoPlayerSection = document.getElementById('videoPlayerSection');
+            const videoPlayer = document.getElementById('inlineVideoPlayer');
+            const videoSource = document.getElementById('inlineVideoSource');
+            const videoTitle = document.getElementById('videoTitle');
+            
+            // Set video source
+            videoSource.src = filename;
+            videoTitle.textContent = filename;
+            
+            // Load the video
+            videoPlayer.load();
+            
+            // Show video player section
+            videoPlayerSection.style.display = 'block';
+            
+            // Scroll to video player
+            videoPlayerSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // Add event listeners to prevent any download-related events
+            videoPlayer.addEventListener('contextmenu', function(e) {
+                e.preventDefault(); // Disable right-click context menu
+            });
+        }
+        
+        function closeVideo() {
+            const videoPlayerSection = document.getElementById('videoPlayerSection');
+            const videoPlayer = document.getElementById('inlineVideoPlayer');
+            const videoSource = document.getElementById('inlineVideoSource');
+            
+            // Add a small delay to prevent any click events from interfering
+            setTimeout(function() {
+                // Pause and reset video
+                videoPlayer.pause();
+                videoPlayer.currentTime = 0;
+                
+                // Clear source
+                videoSource.src = '';
+                videoPlayer.load(); // Force reload to clear the video
+                
+                // Hide video player section
+                videoPlayerSection.style.display = 'none';
+                
+                // Remove focus from any active elements
+                if (document.activeElement) {
+                    document.activeElement.blur();
+                }
+            }, 100);
+        }
+        
+        // Global event handler to prevent any accidental downloads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prevent any default download behavior on video elements
+            document.addEventListener('click', function(e) {
+                // If the click is on a video element, prevent any download actions
+                if (e.target.tagName === 'VIDEO' || e.target.closest('video')) {
+                    e.stopPropagation();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
